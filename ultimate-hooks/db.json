@@ -1,0 +1,65 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "hello",
+      "id": 3
+    },
+    {
+      "content": "Hello darling",
+      "id": 4
+    },
+    {
+      "content": "darling every bety",
+      "id": 5
+    },
+    {
+      "content": "darling every bety",
+      "id": 6
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "Ilari",
+      "number": "",
+      "id": 3
+    },
+    {
+      "name": "Ilari",
+      "number": "044555",
+      "id": 4
+    },
+    {
+      "name": "hotdog",
+      "number": "0402222333",
+      "id": 5
+    },
+    {
+      "name": "hotdog",
+      "number": "0402222333",
+      "id": 6
+    },
+    {
+      "name": "hotdog",
+      "number": "0402222333",
+      "id": 7
+    }
+  ]
+}
