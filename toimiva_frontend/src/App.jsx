@@ -16,11 +16,17 @@ const App = () => {
   const [notification, setNotification] = useState(null)
   const [addedBlog, setAddedBlog] = useState(null)
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (userInfo !== null) {
       blogService.getAll().then(blogs => setBlogs(blogs.filter(blog => blog.user.username === userInfo.username)))
     }
-  }, [userInfo])
+  }, [userInfo]) */
+
+  useEffect(() => {
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs)
+      console.log(blogs)})
+  }, [])
 
 
   useEffect(() => {
@@ -37,6 +43,7 @@ const App = () => {
   const createBlog = async (blogObject) => {
     try {
       const createdBlog = await blogService.createBlog(blogObject)
+      console.log(createdBlog)
       setBlogs(blogs.concat(createdBlog))
       setNotification('success')
       setAddedBlog(createdBlog)
@@ -155,7 +162,7 @@ const App = () => {
 
       <div>
         {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} blog={blog} username={userInfo.name} handleLikes={handleLikes} handleDelete={handleDelete} />
+          <Blog key={blog.id} blog={blog} username={blog.user.name} handleLikes={handleLikes} handleDelete={handleDelete} canRemove={userInfo && blog.user.name===userInfo.name} />
         )}
       </div>
 

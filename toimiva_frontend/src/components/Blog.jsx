@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const Blog = ({ blog, username, handleLikes, handleDelete }) => {
+const Blog = ({ blog, username, handleLikes, handleDelete, canRemove }) => {
   const [show, setShow] = useState(true)
   const label = show ? 'show' : 'hide'
   const blogStyle = {
@@ -36,7 +36,7 @@ const Blog = ({ blog, username, handleLikes, handleDelete }) => {
         <div>{blog.url}</div>
         <div>likes: {blog.likes} <button id='like' onClick={() => handleLikes(blog.id, blogObject)}>like</button></div>
         <div>{username}</div>
-        <button onClick={() => {if (confirm(`Remove blog ${blog.title}?`)) {handleDelete(blog.id, blog.title)}}}>delete blog</button>
+        {canRemove&&<button onClick={() => {if (confirm(`Remove blog ${blog.title}?`)) {handleDelete(blog.id, blog.title)}}}>delete blog</button>}
       </div>
     )
   }

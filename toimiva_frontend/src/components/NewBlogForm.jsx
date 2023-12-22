@@ -21,7 +21,7 @@ const NewBlogForm = ({ userInfo, handleLogOut, createBlog }) => {
     const newObject = {
       title,
       author,
-      url
+      url,
     }
     createBlog(newObject)
     setTitle('')
