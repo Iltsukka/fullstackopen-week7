@@ -1,21 +1,15 @@
 const Notification = ({ notification, addedBlog }) => {
-  if (notification === 'success') {
-    return <div className='successNotify'>
+  if (notification === "success") {
+    return (
+      <div className="successNotify">
         Succesfully added a blog! {addedBlog.title}
-    </div>
+      </div>
+    );
+  } else if (notification === "error") {
+    return <div className="errorNotify">Wrong username or password</div>;
+  } else if (notification === "deletedBlog") {
+    return <div className="successNotify">Deleted blog {addedBlog}</div>;
   }
+};
 
-  else if (notification === 'error') {
-    return <div className='errorNotify'>
-        Wrong username or password
-    </div>
-  }
-
-  else if (notification === 'deletedBlog') {
-    return <div className="successNotify">
-        Deleted blog {addedBlog}
-    </div>
-  }
-}
-
-export default Notification
+export default Notification;
