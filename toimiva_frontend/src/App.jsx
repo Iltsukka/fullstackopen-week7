@@ -7,9 +7,10 @@ import Notification from "./components/Notification";
 
 import NewBlogForm from "./components/NewBlogForm";
 import NotificationContext from "./NotificationContext";
+import { useQuery, useMutation, useQueryClient, QueryClient } from "@tanstack/react-query";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  /* const [blogs, setBlogs] = useState([]); */
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userInfo, setUserInfo] = useState(null);
@@ -29,20 +30,10 @@ const App = () => {
     }
   }
 
+
   const [notification2, dispatchNotification2] = useReducer(notificationReducer, null)
 
-  /* useEffect(() => {
-    if (userInfo !== null) {
-      blogService.getAll().then(blogs => setBlogs(blogs.filter(blog => blog.user.username === userInfo.username)))
-    }
-  }, [userInfo]) */
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs);
-      console.log(blogs);
-    });
-  }, []);
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("loggedInUser");
@@ -53,14 +44,45 @@ const App = () => {
     }
   }, []);
 
-  const createBlog = async (blogObject) => {
+  const newBlogMutation = useMutation({mutationFn: blogService.createBlog,
+  onSuccess: () => {
+    queryClient.invalidateQueries({queryKey: ['blogs']})
+  }})
+
+  /* useEffect(() => {
+    if (userInfo !== null) {
+      blogService.getAll().then(blogs => setBlogs(blogs.filter(blog => blog.user.username === userInfo.username)))
+    }
+  }, [userInfo]) */
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: () => blogService.getAll()
+  })
+
+  console.log(JSON.parse(JSON.stringify(result)))
+  if (result.isLoading) {
+    return <div>loading...</div>
+  }
+  const blogs = result.data
+  console.log(blogs)
+
+  
+  
+
+ /*  useEffect(() => {
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs);
+      console.log(blogs);
+    });
+  }, []); */
+
+
+
+  const createBlog = (blogObject) => {
     try {
-      const createdBlog = await blogService.createBlog(blogObject);
-      console.log(createdBlog);
-      setBlogs(blogs.concat(createdBlog));
+      newBlogMutation.mutate({...blogObject})
       setNotification("success");
-      setAddedBlog(createdBlog);
-      dispatchNotification2({type: 'SUCCESS', payload: createdBlog.title})
+      dispatchNotification2({type: 'SUCCESS', payload: blogObject.title})
       setTimeout(() => {
         dispatchNotification2({type: 'DISABLE'});
       }, 3000);
