@@ -16,6 +16,8 @@ const Notification = () => {
         </div>)
     case 'DISABLE':
         return
+    case 'DELETE':
+        return <div className="successNotify">Deleted blog {notification2.message}</div>
   }
 }
 /*   if (notification === "success") {

@@ -22,8 +22,9 @@ const createBlog = async (newObject) => {
   return response.data;
 };
 
-const likedBlog = async (id, newObject) => {
-  const response = await axios.put(`${baseUrl}/${id}`, newObject);
+export const likedBlog = async (newObject) => {
+  console.log(`the object is ${newObject}`)
+  const response = await axios.put(`${baseUrl}/${newObject.id}`, newObject);
   return response.data;
 };
 

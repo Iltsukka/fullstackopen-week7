@@ -8,6 +8,7 @@ import Notification from "./components/Notification";
 import NewBlogForm from "./components/NewBlogForm";
 import NotificationContext from "./NotificationContext";
 import { useQuery, useMutation, useQueryClient, QueryClient } from "@tanstack/react-query";
+import { likedBlog } from "./services/blogs";
 
 const App = () => {
   /* const [blogs, setBlogs] = useState([]); */
@@ -25,6 +26,8 @@ const App = () => {
         return {type: 'success', message: action.payload}
       case 'DISABLE':
         return null
+      case 'DELETE':
+       return {type: 'DELETE', message: action.payload}
       default:
         return state
     }
@@ -45,6 +48,14 @@ const App = () => {
   }, []);
 
   const newBlogMutation = useMutation({mutationFn: blogService.createBlog,
+  onSuccess: () => {
+    queryClient.invalidateQueries({queryKey: ['blogs']})
+  }})
+
+  const newLikeMutation = useMutation({mutationFn: likedBlog,
+  onSuccess: () => queryClient.invalidateQueries({queryKey: ['blogs']})})
+
+  const deleteMutation = useMutation({mutationFn: blogService.deleteBlog,
   onSuccess: () => {
     queryClient.invalidateQueries({queryKey: ['blogs']})
   }})
@@ -148,8 +159,7 @@ const App = () => {
 
   const handleLikes = async (id, newObject) => {
     try {
-      const response = await blogService.likedBlog(id, newObject);
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : response)));
+      newLikeMutation.mutate({...newObject, id: id})
     } catch (exception) {
       console.log("error liking a blog", exception);
     }
@@ -157,13 +167,13 @@ const App = () => {
 
   const handleDelete = async (id, blogName) => {
     try {
-      const response = blogService.deleteBlog(id);
-      setBlogs(blogs.filter((blog) => blog.id !== id));
+      deleteMutation.mutate(id)
       console.log("deleted a blog");
       setNotification("deletedBlog");
+      dispatchNotification2({type: 'DELETE', payload: blogName})
       setAddedBlog(blogName);
       setTimeout(() => {
-        setNotification(null);
+        dispatchNotification2({type: 'DISABLE'});
       }, 2000);
     } catch (exception) {
       console.log("error deleting a blog", exception);
