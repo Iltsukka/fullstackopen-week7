@@ -1,5 +1,24 @@
-const Notification = ({ notification, addedBlog }) => {
-  if (notification === "success") {
+import { useContext } from "react";
+import NotificationContext from "../NotificationContext";
+
+const Notification = () => {
+  const [notification2, dispatch] = useContext(NotificationContext)
+  console.log(notification2)
+  if (notification2===null) return
+  console.log(notification2)
+  switch (notification2.type) {
+    case 'failedLogin':
+      return <div className="errorNotify">Wrong username or password</div>
+    case 'success':
+      return (
+        <div className="successNotify">
+          Succesfully added a blog! {notification2.message}
+        </div>)
+    case 'DISABLE':
+        return
+  }
+}
+/*   if (notification === "success") {
     return (
       <div className="successNotify">
         Succesfully added a blog! {addedBlog.title}
@@ -10,6 +29,6 @@ const Notification = ({ notification, addedBlog }) => {
   } else if (notification === "deletedBlog") {
     return <div className="successNotify">Deleted blog {addedBlog}</div>;
   }
-};
+}; */
 
 export default Notification;

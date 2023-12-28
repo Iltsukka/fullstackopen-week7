@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer, createContext } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -6,6 +6,7 @@ import "../style.css";
 import Notification from "./components/Notification";
 
 import NewBlogForm from "./components/NewBlogForm";
+import NotificationContext from "./NotificationContext";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,6 +15,21 @@ const App = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [notification, setNotification] = useState(null);
   const [addedBlog, setAddedBlog] = useState(null);
+
+  const notificationReducer = (state, action) => {
+    switch (action.type) {
+      case 'FAILEDLOGIN':
+        return {type: 'failedLogin'}
+      case 'SUCCESS':
+        return {type: 'success', message: action.payload}
+      case 'DISABLE':
+        return null
+      default:
+        return state
+    }
+  }
+
+  const [notification2, dispatchNotification2] = useReducer(notificationReducer, null)
 
   /* useEffect(() => {
     if (userInfo !== null) {
@@ -44,8 +60,9 @@ const App = () => {
       setBlogs(blogs.concat(createdBlog));
       setNotification("success");
       setAddedBlog(createdBlog);
+      dispatchNotification2({type: 'SUCCESS', payload: createdBlog.title})
       setTimeout(() => {
-        setNotification(null);
+        dispatchNotification2({type: 'DISABLE'});
       }, 3000);
     } catch (exception) {
       console.log("error creating a blog");
@@ -65,9 +82,9 @@ const App = () => {
       console.log("login successful");
     } catch (error) {
       console.log("wrong credentials");
-      setNotification("error");
+      dispatchNotification2({type: 'FAILEDLOGIN'});
       setTimeout(() => {
-        setNotification(null);
+        dispatchNotification2({type: 'DISABLE'});
       }, 2000);
     }
   };
@@ -134,7 +151,9 @@ const App = () => {
   if (userInfo === null) {
     return (
       <div>
+        <NotificationContext.Provider value={[notification2, dispatchNotification2]}>
         <Notification notification={notification} />
+        </NotificationContext.Provider>
         <h2>log in to application</h2>
         {loginForm()}
       </div>
@@ -143,7 +162,9 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <NotificationContext.Provider value={[notification2, dispatchNotification2]}>
       <Notification notification={notification} addedBlog={addedBlog} />
+      </NotificationContext.Provider>
       <NewBlogForm
         userInfo={userInfo}
         handleLogOut={handleLogOut}
