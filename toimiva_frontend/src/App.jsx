@@ -9,6 +9,58 @@ import NewBlogForm from "./components/NewBlogForm";
 import NotificationContext from "./NotificationContext";
 import { useQuery, useMutation, useQueryClient, QueryClient } from "@tanstack/react-query";
 import { likedBlog } from "./services/blogs";
+import {Routes, Route, Link
+ } from "react-router-dom";
+
+ const Users = ({ blogs }) => {
+  
+  const userCountMap = {};
+
+  
+  blogs.forEach((blog) => {
+    const userId = blog.user.id;
+    const userName = blog.user.name;
+    userCountMap[userId] = {
+      userName,
+      count: (userCountMap[userId]?.count || 0) + 1,
+    };
+  });
+
+  
+  const sortedUserIds = Object.keys(userCountMap).sort((a, b) => a - b);
+
+  return (
+    <>
+      <h2>Users</h2>
+      <div>
+        
+        {sortedUserIds.map((userId) => (
+          <div key={userId}>
+            {`${userCountMap[userId].userName}: ${userCountMap[userId].count} ${
+              userCountMap[userId].count === 1 ? 'blog' : 'blogs'
+            }`}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+
+
+
+  
+
+
+const LoggedInPage = ({userInfo, handleLogOut}) => {
+  return (
+  <p> {userInfo.name} logged in{" "}
+        <button id="logout" onClick={handleLogOut}>
+          logout
+        </button>
+      </p>
+  )
+}
 
 const App = () => {
   /* const [blogs, setBlogs] = useState([]); */
@@ -191,12 +243,28 @@ const App = () => {
       </div>
     );
   }
+   const padding = {
+    padding: 5
+
+   }
+   
   return (
+    <>
     <div>
-      <h2>blogs</h2>
-      <NotificationContext.Provider value={[notification2, dispatchNotification2]}>
+      <Link style={padding} to="/">home</Link>
+      <Link style={padding} to="/users">users</Link>
+    </div>
+    <h2>blogs</h2>
+    <NotificationContext.Provider value={[notification2, dispatchNotification2]}>
       <Notification notification={notification} addedBlog={addedBlog} />
       </NotificationContext.Provider>
+    <LoggedInPage userInfo={userInfo} handleLogOut={handleLogOut}/>
+    <Routes>
+      <Route path="/users" element={<Users blogs={blogs}/>}/>
+      <Route path="/" element={
+    <div>
+      
+      
       <NewBlogForm
         userInfo={userInfo}
         handleLogOut={handleLogOut}
@@ -218,6 +286,9 @@ const App = () => {
           ))}
       </div>
     </div>
+  }/>
+    </Routes>
+    </>
   );
 };
 
